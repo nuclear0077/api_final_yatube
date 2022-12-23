@@ -3,7 +3,6 @@ from django.db import models
 
 User = get_user_model()
 
-
 class Group(models.Model):
     title = models.CharField(max_length=200, verbose_name='Заголовок группы')
     slug = models.SlugField(unique=True, verbose_name='Имя группы в формате slug')
@@ -68,7 +67,7 @@ class Follow(models.Model):
 
     #:TODO проверить функцию, возможно с ней что то не так,  точнее точно не так )))!!
     def __str__(self):
-        return f'Пользователь: {self.user.get_username()}, подписан на авторов {self.following.username}'
+        return f'Пользователь: {self.user.get_username()}, подписан на автора {self.following.username}'
 
     class Meta:
         constraints = [models.UniqueConstraint(
