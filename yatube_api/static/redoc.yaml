@@ -43,7 +43,7 @@ paths:
                         text: string
                         pub_date: 2021-10-14T20:41:29.648Z
                         image: string
-                        group: 0            
+                        group: 0
           description: Удачное выполнение запроса без пагинации
       tags:
         - api
