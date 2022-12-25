@@ -1,8 +1,8 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import permissions, viewsets
-from rest_framework.exceptions import ValidationError
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework import mixins
 
 from api.permissions import IsAuthorOrReadOnlyPermission
 from api.serializers import (
@@ -11,7 +11,15 @@ from api.serializers import (
     GroupSerializer,
     PostSerializer,
 )
-from posts.models import Follow, Group, Post, User
+from posts.models import Follow, Group, Post
+
+
+class CreateListViewsSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
+    pass
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -31,29 +39,17 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = LimitOffsetPagination
 
 
-class FollowViewSet(viewsets.ModelViewSet):
-    queryset = Follow.objects.all()
+class FollowViewSet(CreateListViewsSet):
     serializer_class = FollowSerializer
     filter_backends = (SearchFilter,)
-    search_fields = ('following__username',)
+    search_fields = ('^following__username',)
     pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
         return Follow.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        if not self.request.data.get('following'):
-            raise ValidationError('Отсутствует значение following')
-        following = get_object_or_404(
-            User, username=self.request.data.get('following')
-        )
-        if not following != self.request.user:
-            raise ValidationError('Подписываться на самого себя запрещено')
-        if following.following.filter(user=self.request.user):
-            raise ValidationError(
-                f'вы уже подписаны на' f'пользователя {following}'
-            )
-        serializer.save(user=self.request.user, following=following)
+        serializer.save(user=self.request.user)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
