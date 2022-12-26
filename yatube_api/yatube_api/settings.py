@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'api',
     'posts',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -96,6 +97,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -103,4 +105,11 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'AUTH_HEADER_TYPES': ('Bearer',),
+}
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Yatube API',
+    'DESCRIPTION': 'Social Network',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
 }
